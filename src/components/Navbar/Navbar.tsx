@@ -1,93 +1,96 @@
-import React, { useState, ReactNode, useCallback } from "react";
-import {
-  AppShell,
-  Navbar,
-  Text,
-  useMantineTheme,
-  Stack,
-  Group,
-} from "@mantine/core";
-import {
-  ClipboardIcon,
-  DashboardIcon,
-  TodoIcon,
-  ChatIcon,
-  CalendarIcon,
-} from "../Icon";
-import NavbarLink from "./NavbarLink/NavbarLink";
+import { useStateContext } from "context/ContextProvider";
 import Link from "next/link";
-import { useRouter } from "next/router";
-
-interface NavBarProps {
-  children?: ReactNode;
+import { ReactNode, useEffect } from "react";
+import { AiOutlineMenuFold, AiOutlineMenuUnfold } from "react-icons/ai";
+import { IconType } from "react-icons/lib";
+import { ChatIcon, MenuIcon, NotificationIcon } from "../Icon";
+interface NavButtonProps {
+  customFunc: () => void;
+  icon: ReactNode;
+  color: string;
 }
-export default function NavBar({ children }: NavBarProps) {
-  const theme = useMantineTheme();
-  const [opened, setOpened] = useState(false);
-  const router = useRouter();
-  const isActive = useCallback(
-    (value: string) => router.asPath.includes(value),
-    [router.asPath]
-  );
+const NavButton = ({ customFunc, icon, color }: NavButtonProps) => {
   return (
-    <AppShell
-      styles={{
-        main: {
-          background:
-            theme.colorScheme === "dark"
-              ? theme.colors.dark[8]
-              : theme.colors.gray[0],
-        },
-      }}
-      navbarOffsetBreakpoint="sm"
-      asideOffsetBreakpoint="sm"
-      fixed
-      navbar={
-        <Navbar
-          p="md"
-          hiddenBreakpoint="sm"
-          hidden={!opened}
-          width={{ sm: 100, lg: 250 }}
-        >
-          <Stack spacing={30}>
-            <Group spacing={4}>
-              <ClipboardIcon className="text-green-500" size={20} />
-              <Text className="text-xl font-bold text-green-500 ">
-                ManageThyTasks
-              </Text>
-            </Group>
-
-            <Stack spacing={10}>
-              <NavbarLink
-                active={isActive("dashboard")}
-                href="/dashboard"
-                label="Dashboard"
-                icon={<DashboardIcon />}
-              />
-              <NavbarLink
-                active={isActive("todo")}
-                href="/todo"
-                label="Todo"
-                icon={<TodoIcon />}
-              />
-              <NavbarLink
-                active={isActive("chats")}
-                href="/chats"
-                label="Chats"
-                icon={<ChatIcon />}
-              />
-              <NavbarLink
-                active={isActive("calendar")}
-                href="/calendar"
-                label="Calendar"
-                icon={<CalendarIcon />}
-              />
-            </Stack>
-          </Stack>
-        </Navbar>
-      }
+    <button
+      onClick={() => customFunc()}
+      style={{ color, border: "none", background: "none", cursor: "pointer" }}
+      className="relative text-2xl p-1 hover:bg-light-gray"
     >
-      {children}
-    </AppShell>
+      {icon}
+    </button>
+  );
+};
+
+export default function Navbar() {
+  const { state, setState } = useStateContext();
+  useEffect(() => {
+    const handleResize = () =>
+      setState({ ...state, screenSize: window.innerWidth });
+
+    window.addEventListener("resize", handleResize);
+
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (state.screenSize && state.screenSize <= 900) {
+      setState({ ...state, activeMenu: false });
+    } else {
+      setState({ ...state, activeMenu: true });
+    }
+  }, [state.screenSize]);
+
+  const handleActiveMenu = () =>
+    setState({ ...state, activeMenu: !state.activeMenu });
+
+  return (
+    <div className="flex justify-between p-2 md:ml-6 md:mr-6 ">
+      {!state.activeMenu ? (
+        <NavButton
+          customFunc={handleActiveMenu}
+          color={"#03C9D7"}
+          icon={<AiOutlineMenuUnfold />}
+        />
+      ) : (
+        <NavButton
+          customFunc={handleActiveMenu}
+          color={"#03C9D7"}
+          icon={<AiOutlineMenuFold />}
+        />
+      )}
+      <div className="flex">
+        <NavButton
+          customFunc={() => <Link href="chats" />}
+          color={"#03C9D7"}
+          icon={<ChatIcon />}
+        />
+        <NavButton
+          customFunc={() => <Link href="notifications" />}
+          color={"#03C9D7"}
+          icon={<NotificationIcon />}
+        />
+        {/* <TooltipComponent content="Profile" position="BottomCenter">
+          <div
+            className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded-lg"
+            onClick={() => handleClick("userProfile")}
+          > */}
+        {/* <img
+              className="rounded-full w-8 h-8"
+              src={avatar}
+              alt="user-profile"
+            /> */}
+        {/* <p>
+              <span className="text-gray-400 text-14">Hi,</span>{" "}
+              <span className="text-gray-400 font-bold ml-1 text-14">
+                Michael
+              </span>
+            </p>
+            <MdKeyboardArrowDown className="text-gray-400 text-14" />
+          </div>
+        </TooltipComponent> */}
+      </div>
+    </div>
   );
 }

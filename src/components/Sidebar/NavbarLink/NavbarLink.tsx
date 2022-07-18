@@ -5,8 +5,11 @@ import { Box, Text, UnstyledButton } from "@mantine/core";
 
 interface NavbarLinkProps {
   href?: string;
+
   label: string;
+
   icon?: ReactNode;
+
   active?: boolean;
 }
 
@@ -14,18 +17,27 @@ export default function NavbarLink({
   href,
   icon,
   label,
-  active
+  active,
+
 }: NavbarLinkProps) {
   return (
     <Link href={href || "/"}>
       <UnstyledButton
-        className="flex flex-row items-center w-full rounded-sm px-4 py-3 hover:bg-gray-100"
+        className="flex flex-row items-center w-full rounded-lg px-4 py-3 hover:bg-gray-100"
         sx={(theme) => ({
-          backgroundColor: active ? theme.colors.gray[1] : "white",
+          backgroundColor: active ? "#03C9D7" : "white",
         })}
       >
         <Box className="text-xl mr-2.5 flex items-center">{icon}</Box>
-        <Text className="text-lg" sx={{ fontWeight: "normal" }}>{label}</Text>
+        <Text
+          className="text-lg"
+          sx={{
+            fontWeight: "normal",
+
+          }}
+        >
+          {label}
+        </Text>
       </UnstyledButton>
     </Link>
   );
