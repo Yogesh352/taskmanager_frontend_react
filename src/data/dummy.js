@@ -44,6 +44,7 @@ import product5 from "./product5.jpg";
 import product6 from "./product6.jpg";
 import product7 from "./product7.jpg";
 import product8 from "./product8.jpg";
+import Image from "next/image";
 
 export const gridOrderImage = (props) => (
   <div>
@@ -81,11 +82,14 @@ export const kanbanGrid = [
 ];
 const gridEmployeeProfile = (props) => (
   <div className="flex items-center gap-2">
-    <img
-      className="rounded-full w-10 h-10"
+    <Image
+      className="rounded-full"
+      width={30}
+      height={30}
       src={props.EmployeeImage}
       alt="employee"
     />
+
     <p>{props.Name}</p>
   </div>
 );
@@ -502,12 +506,6 @@ export const employeesGrid = [
     width: "120",
     textAlign: "Center",
   },
-  {
-    field: "EmployeeID",
-    headerText: "Employee ID",
-    width: "125",
-    textAlign: "Center",
-  },
 ];
 
 export const links = [
@@ -545,10 +543,8 @@ export const links = [
         name: "todo",
         icon: <TodoIcon />,
       },
-
     ],
   },
- 
 ];
 
 export const cartData = [

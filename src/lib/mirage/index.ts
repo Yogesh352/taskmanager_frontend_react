@@ -1,3 +1,4 @@
+import { MemberResponse } from "@/domains/members/types/member";
 import { TodoResponse } from "./../../domains/todo/types/todo";
 import { createServer } from "miragejs";
 import { AnyRegistry } from "miragejs/-types";
@@ -5,6 +6,7 @@ import { RouteHandler } from "miragejs/server";
 import { generateTodo } from "./todo";
 import { PaginatedResponse } from "@/types/api";
 import { paginatedResponse } from "./utils";
+import { generateMember } from "./member";
 
 type HTTPMethod = "get" | "post" | "put" | "delete";
 
@@ -32,10 +34,8 @@ export function makeServer({ environment = "test" } = {}) {
           }
           return response;
         });
-
-        // For testing.
-        // console.log(`[${method.toUpperCase()}] \`/api/v1${path}\`\n` + '```\n' + JSON.stringify(handler(this.schema, { params: {}, requestBody: '', url: '', requestHeaders: {} }), null, 2) + '\n```');
       };
+
       register<PaginatedResponse<Partial<TodoResponse>>>(
         "get",
         "/todo",
@@ -45,6 +45,13 @@ export function makeServer({ environment = "test" } = {}) {
       register<TodoResponse>("get", "/todo/:id", generateTodo);
       register<TodoResponse>("put", "/todo/:id", generateTodo);
       register("delete", "/todo/:id", () => ({}));
+
+      register<PaginatedResponse<Partial<MemberResponse>>>(
+        "get",
+        "/members",
+        (_, request) =>
+          paginatedResponse<MemberResponse>(request, generateMember)
+      );
 
       this.namespace = "";
       this.passthrough();

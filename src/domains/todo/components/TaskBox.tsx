@@ -22,7 +22,6 @@ const TaskBox = ({
 }: TaskBoxProps) => {
   const { data: response } = useTodo({ params });
   const toDos = useMemo(() => response?.data || [], [response]);
-  console.log(toDos);
   return (
     <Group className="bg-white w-full border border-solid borger-gray-500 rounded-sm uppercase">
       <Text className="text-bold">{title}</Text>
